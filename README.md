@@ -7,6 +7,10 @@ NOTE
 -----
 The scripts in this repo are meant to be demonstrated on a cluster. In particular, a cluster whose jobs are managed by a Sun Grid Engine (SGE), and whose nodes are named like compute-0-1, ..., compute-0-11. To use these scripts on your own cluster, you'll have to modify the regexp pattern in `initializeYetiBackend.R`. Also, when submitting the job via `sge_submission_script.sh`, you'll want to modify the line `#$ -M your.email@whatever.domain` accordingly.
 
+Once you've modified everything appropriately, you can run the toy example, `exampleYetiScript.R`, (on 48 cores, say) by navigating your terminal to wherever you cloned this repo to and submitting the job through:
+
+`qsub -pe orte 48 -R y sge_submission_script.sh`
+
 
 EXPLANATION
 -----------
@@ -17,6 +21,6 @@ Using `RMPI` (via the `doRmpi` package, for example) is an acceptable way to lev
 
 A Yeti cluster initially leverages your `rmpi` submission to perform some book-keeping and figure out how many nodes (and consequently, how many slots on each node) the scheduler has allocated for your job. It then replaces the RMPI cluster with a SNOW cluster whose machines are precisely the nodes allocated to your original submission. Each node inside said SNOW cluster is aware of how many cores the scheduler has alloted to it for your job, so anytime a task is given to a core, the core can register a multicore backend (through the `doParallel` package) and perform the assigned task in a parallelized fashion.
 
-An example of a situation where a Yeti cluster would be more effective than a simple parallel implementation with `doRmpi` would be when you're calculating values of a function over a particular domain, and the function, itself, is "embarassignly parallel". In this case, `doRmpi` would have every scheduled core peform the function calculation sequentially. However, a Yeti cluster could progress through the function's domain by processing several points in parallel (the number of points is equal to the number of nodes scheduled to your job) and inside each batch of points, calculating the function in parallel. 
+An example of a situation where a Yeti cluster would be more effective than a simple parallel implementation with `doRmpi` would be when you're calculating values of a function over a particular domain, and the function, itself, is "embarassingly parallel". In this case, `doRmpi` would have every scheduled core peform the function calculation sequentially. However, a Yeti cluster could progress through the function's domain by processing several points in parallel (the number of points is equal to the number of nodes scheduled to your job) and inside each batch of points, calculating the function in parallel. 
 
 So why "Yeti"? Because this framework, turns your RMPI cluster in a threaded (hence, hairy) SNOW cluster.
