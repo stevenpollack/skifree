@@ -3,7 +3,15 @@ Yeti -- A hairy, SNOW covered monster
 
 This repo contains the script(s) necessary to create a Yeti cluster.
 
-To understand what a Yeti cluster is (and why you may want to use it), imagine you have have access to a cluster with 15 nodes, and 32 cores on each node (managed by something like a SUN Grid Engine). The nodes are named something like node1, node2, ..., node15 and because of the high traffic on your cluster, even a job submission requesting 12 cores may be spread across multiple nodes. 
+NOTE
+-----
+The scripts in this repo are meant to be demonstrated on a cluster. In particular, a cluster whose jobs are managed by a Sun Grid Engine (SGE), and whose nodes are named like compute-0-1, ..., compute-0-11. To use these scripts on your own cluster, you'll have to modify the regexp pattern in `initializeYetiBackend.R`. Also, when submitting the job via `sge_submission_script.sh`, you'll want to modify the line `#$ -M your.email@whatever.domain` accordingly.
+
+
+EXPLANATION
+-----------
+
+To understand what a Yeti cluster is (and why you may want to use it), imagine you have have access to a cluster with 15 nodes, and 32 cores on each node. The nodes are named something like node1, node2, ..., node15 and because of the high traffic on your cluster, even a job submission requesting 12 cores may be spread across multiple nodes. 
 
 Using `RMPI` (via the `doRmpi` package, for example) is an acceptable way to leverage any parallelization you've written into your code; however, if you're passing non-trivial amounts of data between the master process and the various slaves, the speed benefits from your parallelized may be overshadowed by the time to move data back and forth. Hence, I propose Yeti clusters as a workaround to this problem.
 
