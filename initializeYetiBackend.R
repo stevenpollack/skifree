@@ -28,7 +28,7 @@ rm(list=ls())
 # robustly load packages
 loadPackages <- Vectorize(function(package) {
   # package should be a string of a legit package name.
-  stopifnot(class(package) == "character")
+  package <- as.character(package)
   
   is.pkg.usable <- tryCatch(eval(bquote(library(.(package))))
                             ,error=function(e){FALSE})
@@ -47,7 +47,7 @@ nCores <- as.numeric(Sys.getenv('NSLOTS'))
 
 # initialize "full", RMPI cluster to figure out which nodes
 # are playing host and how many slots are allocated 
-loadPackages(doMPI)
+loadPackages("doMPI")
 rmpi.cl <- startMPIcluster()
 registerDoMPI(rmpi.cl)
 
@@ -69,7 +69,7 @@ print(core.dist)
 closeCluster(rmpi.cl)
 
 # start a SOCK cluster between the scheduled hosts
-loadPackages(doSNOW)
+loadPackages("doSNOW")
 sock.cluster <- makeCluster(host.names,type="SOCK")
 
 determineFreeCores <- function() {
@@ -81,7 +81,7 @@ determineFreeCores <- function() {
 	# Should you move to another cluster, you'll
 	# have to modify the pattern appropriately.
 	node.name <- regmatches(x=node.name,
-		m=regexpr(pattern="(compute-\\d-\\d{1,2}",text=node.name))
+		m=regexpr(pattern="compute-\\d-\\d{1,2}",text=node.name))
 	
 	# look up free cores from core.dist
 	free.cores <- core.dist[node.name]

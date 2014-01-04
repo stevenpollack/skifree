@@ -27,6 +27,6 @@
 
 
 # Manually set the displayed job name
-#$ -N yourJobName
+#$ -N exampleYeti
 
-mpirun -v -n 1 R --vanilla < yourRScript.R > yourRScript.Rout
+mpirun -v -n 1 R --vanilla < exampleYetiScript.R > exampleYetiScript.Rout
